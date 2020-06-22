@@ -1,9 +1,15 @@
 import * as Magick from 'https://knicknic.github.io/wasm-imagemagick/magickApi.js';
 
 const doMagic = async () => {
-    const images = Array.from(document.querySelectorAll("img")).filter(img => img.src !== '');
-    const proxiedImages = await Promise.all(images.map(async image => {
-        const url = 'https://imagefd.work/image';
+    const images = Array.from(document.querySelectorAll("img"))
+        .filter(image => {
+            const isImage = /(jpg|jpeg|gif|png)/i.test(image.src);
+            return isImage === true;
+        });
+
+    const imageArrayBuffers = await Promise.all(images.map(async image => {
+        // const url = 'https://imagefd.work/image';
+        const url = 'http://localhost:8080/image';
         const fetchedImage = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json; charset=UTF-8' },
@@ -17,8 +23,8 @@ const doMagic = async () => {
         return arrayBuffer;
     }));
 
-    for (let i = 0; i < images.length; i++) {
-        const sourceBytes = new Uint8Array(proxiedImages[i]);
+    images.forEach(async (image, index) => {
+        const sourceBytes = new Uint8Array(imageArrayBuffers[index]);
         const inputFiles = [{
             name: 'srcFile.png',
             content: sourceBytes,
@@ -26,8 +32,8 @@ const doMagic = async () => {
         const command = ['convert', 'srcFile.png', '-background', '#ffffff', '-alpha', 'deactivate', '-flatten', 'outFile.png'];
         const processedFiles = await Magick.Call(inputFiles, command);
         const firstOutputImage = processedFiles[0];
-        images[i].src = URL.createObjectURL(firstOutputImage["blob"]);
-    }
+        image.src = URL.createObjectURL(firstOutputImage["blob"]);
+    });
 }
 
 doMagic();
