@@ -3,7 +3,7 @@ import * as Magick from 'https://knicknic.github.io/wasm-imagemagick/magickApi.j
 const doMagic = async () => {
     const images = Array.from(document.querySelectorAll("img")).filter(img => img.src !== '');
     const proxiedImages = await Promise.all(images.map(async image => {
-        const url = 'http://localhost:8080/image?url=' + image.src;
+        const url = 'https://imagefd.work/image?url=' + image.src;
         const fetchedImage = await fetch(url);
         const arrayBuffer = await fetchedImage.arrayBuffer();
         return arrayBuffer;
