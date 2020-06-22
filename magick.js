@@ -3,8 +3,16 @@ import * as Magick from 'https://knicknic.github.io/wasm-imagemagick/magickApi.j
 const doMagic = async () => {
     const images = Array.from(document.querySelectorAll("img")).filter(img => img.src !== '');
     const proxiedImages = await Promise.all(images.map(async image => {
-        const url = 'https://imagefd.work/image?url=' + image.src;
-        const fetchedImage = await fetch(url);
+        const url = 'https://imagefd.work/image';
+        const fetchedImage = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+            body: JSON.stringify(
+                {
+                    url: image.src,
+                }
+            ),
+        });
         const arrayBuffer = await fetchedImage.arrayBuffer();
         return arrayBuffer;
     }));
