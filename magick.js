@@ -8,8 +8,7 @@ const doMagic = async () => {
         });
 
     const imageArrayBuffers = await Promise.all(images.map(async image => {
-        // const url = 'https://imagefd.work/image';
-        const url = 'http://localhost:8080/image';
+        const url = 'https://imagefd.work/image';
         const fetchedImage = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json; charset=UTF-8' },

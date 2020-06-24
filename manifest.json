@@ -2,9 +2,11 @@
     "name": "imagefd",
     "version": "1.0",
     "description": "image for darkmode",
-    "permissions": [
-        "activeTab"
-    ],
+    "icons": {
+        "16": "icons/moon16.png",
+        "48": "icons/moon48.png",
+        "128": "icons/moon128.png"
+    },
     "content_scripts": [
         {
             "matches": [
