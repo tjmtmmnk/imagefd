@@ -1,8 +1,19 @@
 import * as Magick from 'https://knicknic.github.io/wasm-imagemagick/magickApi.js';
 
 let hasFetched = {};
+let nowUri = '';
+
 const doMagic = async () => {
-    const images = Array.from(document.querySelectorAll("img")).filter(image => image.src !== "" && !hasFetched[image.src]);
+    const images = Array.from(document.querySelectorAll("img")).filter(image => {
+        const validUri = /^https?/.test(image.src);
+        return validUri && !hasFetched[image.src]
+    });
+
+    // reset if uri has changed
+    if (images.length > 0 && nowUri !== images[0].baseURI) {
+        hasFetched = {};
+        nowUri = images[0].baseURI;
+    }
 
     const imageArrayBuffers = await Promise.all(images.map(async image => {
         hasFetched[image.src] = true;
