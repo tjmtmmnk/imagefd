@@ -1,9 +1,11 @@
 import * as Magick from 'https://knicknic.github.io/wasm-imagemagick/magickApi.js';
 
+let hasFetched = {};
 const doMagic = async () => {
-    const images = Array.from(document.querySelectorAll("img")).filter(image => image.src !== "");
+    const images = Array.from(document.querySelectorAll("img")).filter(image => image.src !== "" && !hasFetched[image.src]);
 
     const imageArrayBuffers = await Promise.all(images.map(async image => {
+        hasFetched[image.src] = true;
         try {
             const url = 'https://imagefd.work/image';
             const fetchedImage = await fetch(url, {
@@ -21,7 +23,6 @@ const doMagic = async () => {
 
             return await fetchedImage.arrayBuffer();
         } catch (err) {
-            console.log(image.src);
             return new ArrayBuffer(0);
         }
     }));
@@ -40,9 +41,11 @@ const doMagic = async () => {
 
         const firstOutputImage = processedFiles[0];
         if (firstOutputImage === undefined || firstOutputImage["blob"] === undefined) return;
-        
+
         image.src = URL.createObjectURL(firstOutputImage["blob"]);
     });
 }
 
-doMagic();
+window.addEventListener('scroll', (e) => {
+    doMagic();
+});
